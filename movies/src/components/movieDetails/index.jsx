@@ -9,8 +9,9 @@ import Fab from "@mui/material/Fab";
 import Typography from "@mui/material/Typography";
 import Drawer from "@mui/material/Drawer";
 import MovieReviews from "../movieReviews"
-
-
+import {useQuery} from "@tanstack/react-query";
+import { getMovieRecommendations } from "../../api/tmdb-api";
+import { getMovieCredits } from "../../api/tmdb-api";
 
 const root = {
     display: "flex",
@@ -24,6 +25,18 @@ const chip = { margin: 0.5 };
 
 const MovieDetails = ({ movie }) => {  // Don't miss this!
 const [drawerOpen, setDrawerOpen] = useState(false);
+
+const { data: recommendations, error: recommendationsError, isPending: recommendationsPending,
+   isError: recommendationsIsError } = useQuery({
+  queryKey: ['recommendations', { id: movie.id }],
+  queryFn: getMovieRecommendations,
+});
+
+const { data: credits, error: creditsError, isPending: creditsPending, 
+  isError: creditsIsError } = useQuery({
+    queryKey: ["credits", { id: movie.id }],
+    queryFn: getMovieCredits,
+  }); 
 
   return (
     <>
@@ -75,7 +88,47 @@ const [drawerOpen, setDrawerOpen] = useState(false);
           </li>
         ))}
       </Paper>
-      
+
+
+            <Typography variant="h5" component="h3">
+        Recommendations
+      </Typography>
+
+      {recommendationsPending ? (
+        <Typography>Loading recommendations...</Typography>
+      ) : recommendationsIsError ? (
+        <Typography color="error">{recommendationsError.message}</Typography>
+      ) : (
+        <Paper component="ul" sx={{ ...root }}>
+          {recommendations.slice(0, 5).map((recommendedMovie) => (
+            <li key={recommendedMovie.id}>
+              <Chip label={recommendedMovie.title} sx={{ ...chip }} />
+            </li>
+          ))}
+        </Paper>
+      )}
+
+      <Typography variant="h5" component="h3">
+        Cast
+      </Typography>
+
+      {creditsPending ? (
+        <Typography>Loading cast...</Typography>
+      ) : creditsIsError ? (
+        <Typography color="error">{creditsError.message}</Typography>
+      ) : (
+        <Paper component="ul" sx={{ ...root }}>
+          {credits.slice(0, 10).map((person) => (
+            <li key={person.credit_id}>
+              <Chip
+                label={`${person.name} (${person.character})`}
+                sx={{ ...chip }}
+              />
+            </li>
+          ))}
+        </Paper>
+      )}
+
       <Fab
         color="secondary"
         variant="extended"
