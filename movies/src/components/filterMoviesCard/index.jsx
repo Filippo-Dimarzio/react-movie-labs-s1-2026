@@ -52,6 +52,10 @@ export default function FilterMoviesCard(props) {
     handleChange(e, "genre", e.target.value);
   };
 
+  const handleRatingChange = (e) => {
+    handleChange(e, "rating", e.target.value);
+  };
+
   return (
     <Card 
       sx={{
@@ -90,6 +94,25 @@ export default function FilterMoviesCard(props) {
             })}
           </Select>
         </FormControl>
+
+        <FormControl sx={{...formControl}}> 
+          <InputLabel id="rating-label">Minimum Rating</InputLabel>
+          <Select
+            labelId="rating-label"
+            id="rating-select"
+            defaultValue=""
+            value={props.ratingFilter}
+            label="Minimum Rating"
+            onChange={handleRatingChange}
+            >
+              <MenuItem value="0">Any rating</MenuItem>
+              <MenuItem value="3">+</MenuItem>
+              <MenuItem value="4">4+</MenuItem>
+              <MenuItem value="5">5+</MenuItem>
+              <MenuItem value="6">6+</MenuItem> 
+            </Select>
+        </FormControl>
+
       </CardContent>
       <CardMedia
         sx={{ height: 300 }}
