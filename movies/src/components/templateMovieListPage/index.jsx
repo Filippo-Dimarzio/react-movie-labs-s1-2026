@@ -20,7 +20,9 @@ function MovieListPageTemplate({ movies, title, action, page, pageCount, onPageC
       return genreId > 0 ? m.genre_ids.includes(genreId) : true;
     })
     .filter((m) => {
-      return Number(m.vote_average) >= minimumRating;
+      const rating = Number(m.vote_average.toFixed(1));
+      return minimumRating === 0 ||
+      (rating >= minimumRating && rating < minimumRating + 1);
     });
 
   const handleChange = (type, value) => {
