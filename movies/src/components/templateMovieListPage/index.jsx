@@ -3,8 +3,9 @@ import Header from "../headerMovieList";
 import FilterCard from "../filterMoviesCard";
 import MovieList from "../movieList";
 import Grid from "@mui/material/Grid";
+import Pagination from "@mui/material/Pagination";
 
-function MovieListPageTemplate({ movies, title, action }) {
+function MovieListPageTemplate({ movies, title, action, page, pageCount, onPageChange }) {
   const [nameFilter, setNameFilter] = useState("");
   const [genreFilter, setGenreFilter] = useState("0");
   const genreId = Number(genreFilter);
@@ -19,14 +20,13 @@ function MovieListPageTemplate({ movies, title, action }) {
       return genreId > 0 ? m.genre_ids.includes(genreId) : true;
     })
     .filter((m) => {
-      return minimumRating > 0 ? m.vote_average >= minimumRating : true;
+      return Number(m.vote_average) >= minimumRating;
     });
-  }
 
   const handleChange = (type, value) => {
     if (type === "name") setNameFilter(value);
     else if (type === "genre") setGenreFilter(value);
-    else setRatingFilter(value);
+    else if (type === "rating") setRatingFilter(Number(value));
   };
 
   return (
@@ -48,8 +48,19 @@ function MovieListPageTemplate({ movies, title, action }) {
           />
         </Grid>
         <MovieList action={action} movies={displayedMovies}></MovieList>
+      {onPageChange && (
+        <Grid size={12} sx={{display: "flex", justifyContent: "center", padding: 2}}>
+          <Pagination
+          count={pageCount}
+          page={page}
+           onChange={(event, value) => onPageChange(value)}
+          color="primary"
+          />
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );
+}
 
 export default MovieListPageTemplate;

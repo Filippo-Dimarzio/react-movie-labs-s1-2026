@@ -14,6 +14,7 @@ import PopularPage from "./pages/popularPage";
 import TopRatedPage from "./pages/topRatedPage";
 import NowPlayingPage from "./pages/nowPlayingPage";
 import PlaylistPage from "./pages/playlistPage";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,9 +26,28 @@ const queryClient = new QueryClient({
   },
 });
 
+const theme = createTheme({
+  palette:{
+    primary: {main: "#8697de"},
+    secondary: {main: "#f9d77f"},
+  },
+  components: {
+    MuiCard:{
+      styleOverrides: {
+        root:{
+          borderRadius: 8,
+          boxShadow:  "0 2px 8px rgba(0, 0, 0, 0.18)",
+        },
+      },
+    },
+  },
+});
+  
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
       <BrowserRouter>
         <SiteHeader />
         <MoviesContextProvider>
@@ -48,6 +68,7 @@ const App = () => {
         </MoviesContextProvider>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };
